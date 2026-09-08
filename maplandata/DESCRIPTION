@@ -1,0 +1,30 @@
+Package: maplandata
+Type: Package
+Title: Download and Load CMS Medicare Advantage Plan Enrollment Data
+Version: 0.1.0
+Authors@R: person("Your", "Name", email = "you@example.com", role = c("aut", "cre"))
+Description: Tools to automatically pull Medicare Advantage / Part D contract
+    and enrollment data files published by CMS (cms.gov), detect when a
+    source file on cms.gov has changed so re-runs only re-download what is
+    new, and load the most up-to-date local copy of any dataset into R
+    regardless of whether the underlying file is .csv, .xls, or .xlsx.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends: R (>= 3.6)
+Imports:
+    httr,
+    rvest,
+    xml2,
+    digest,
+    readxl,
+    data.table,
+    fs,
+    purrr,
+    stringr,
+    lubridate,
+    tibble
+Suggests:
+    testthat (>= 3.0.0)
+RoxygenNote: 7.3.1
+Config/testthat/edition: 3
