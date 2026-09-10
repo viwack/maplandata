@@ -44,7 +44,8 @@ upsert_manifest_row <- function(manifest, row) {
   row    <- lapply(row, norm)
   row_dt <- data.table::as.data.table(row)
 
-  if (ncol(manifest) > 0) manifest <- manifest[, lapply(.SD, as.character)]
+  if (ncol(manifest) > 0)
+    manifest <- data.table::as.data.table(lapply(manifest, as.character))
 
   key_match <- manifest$dataset_key == row$dataset_key &
     manifest$year     == row$year &
@@ -113,7 +114,8 @@ backfill_manifest <- function(root = default_ma_plans_root(), month = DEFAULT_MO
   }
 
   add_dt <- data.table::rbindlist(new_rows, use.names = TRUE, fill = TRUE)
-  if (ncol(manifest) > 0) manifest <- manifest[, lapply(.SD, as.character)]
+  if (ncol(manifest) > 0)
+    manifest <- data.table::as.data.table(lapply(manifest, as.character))
   manifest <- data.table::rbindlist(list(manifest, add_dt), use.names = TRUE, fill = TRUE)
   write_manifest(manifest, file.path(root, "_manifest.csv"))
   message(sprintf("Backfill: added %d file(s) across %d dataset folder(s).",
