@@ -69,5 +69,8 @@ REGISTRY <- tibble::tribble(
   "https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-advantagepart-d-contract-and-enrollment-data/monthly-pdp-enrollment-state/county/contract",
 
   "SNP",              "SNP",               "SNP Comprehensive Report",
-  "https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-advantagepart-d-contract-and-enrollment-data/special-needs-plan-snp-data"
+  "https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-advantagepart-d-contract-and-enrollment-data/special-needs-plan-snp-data",
+
+  "MA_svc_area",      "MA_svc_area",       "MA Contract Service Area by State/County",
+  "https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-advantagepart-d-contract-and-enrollment-data/ma-contract-service-area-state/county"
 )

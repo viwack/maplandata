@@ -44,7 +44,7 @@ upsert_manifest_row <- function(manifest, row) {
   row    <- lapply(row, norm)
   row_dt <- data.table::as.data.table(row)
 
-  if (ncol(manifest) > 0)
+  # if (ncol(manifest) > 0)
     manifest <- data.table::as.data.table(lapply(manifest, as.character))
 
   key_match <- manifest$dataset_key == row$dataset_key &
