@@ -1,14 +1,14 @@
-# maplandata
+# R package: "maplandata"
 
-Download and load CMS Medicare Advantage / Part D contract & enrollment data
-directly from cms.gov, with automatic change detection so re-running the
+The purpose of this package is to download and load CMS Medicare Advantage / Part D contract & enrollment data
+directly from cms.gov, with automatic change detection, so re-running the
 pipeline only re-pulls what's new.
 
 ## Installation
 
 ```r
 # install.packages("devtools")  # if you don't already have it
-devtools::install_github("YOUR_GITHUB_USERNAME/maplandata")
+devtools::install_github("viwack/maplandata")
 ```
 
 ## Usage
@@ -44,8 +44,6 @@ ctrct_2020 <- get_ma_data("MA_ctrct", year = 2020)
 | `MA_st_cty_ctrct` | MA Enrollment by State/County/Contract         |
 | `PDP_st_cty_ctrct`| PDP Enrollment by State/County/Contract        |
 | `SNP`             | SNP Comprehensive Report                       |
-
-`*serv_area` files are generated in-house and intentionally excluded.
 
 ## License
 
