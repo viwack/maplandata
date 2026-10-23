@@ -43,10 +43,10 @@ upsert_manifest_row <- function(manifest, row) {
   }
   row    <- lapply(row, norm)
   row_dt <- data.table::as.data.table(row)
-
+  
   # if (ncol(manifest) > 0)
-    manifest <- data.table::as.data.table(lapply(manifest, as.character))
-
+  manifest <- data.table::as.data.table(lapply(manifest, as.character))
+  
   key_match <- manifest$dataset_key == row$dataset_key &
     manifest$year     == row$year &
     manifest$month    == row$month &
@@ -72,14 +72,19 @@ upsert_manifest_row <- function(manifest, row) {
 backfill_manifest <- function(root = default_ma_plans_root(), month = DEFAULT_MONTHS) {
   manifest <- read_manifest(file.path(root, "_manifest.csv"))
   known    <- manifest$local_path
-
+  
   new_rows <- list()
   for (i in seq_len(nrow(REGISTRY))) {
     dataset_key <- REGISTRY$dataset_key[i]
     folder      <- REGISTRY$folder[i]
     dir_path    <- file.path(root, folder)
     if (!fs::dir_exists(dir_path)) next
-
+    # zip-on-demand datasets are tracked by pull_static(); their extracted/
+    # copies are a cache, not source files
+    if (identical(REGISTRY$period_type[i], "static")) next
+    # annual datasets are recorded with month "00" (see pull_one())
+    ds_month <- if (REGISTRY$period_type[i] %in% c("year", "page")) "00" else month
+    
     files <- fs::dir_ls(dir_path, type = "file", regexp = "\\.(csv|xlsx|xls)$",
                         recurse = TRUE)
     files <- files[!stringr::str_detect(basename(files), "^~\\$")]
@@ -87,14 +92,17 @@ backfill_manifest <- function(root = default_ma_plans_root(), month = DEFAULT_MO
     for (f in files) {
       f <- as.character(f)
       if (f %in% known) next
+      # year from the file name, falling back to a <year>/ subfolder
       yr <- stringr::str_extract(basename(f), "(19|20)\\d{2}")
+      if (is.na(yr)) yr <- stringr::str_extract(as.character(fs::path_rel(f, dir_path)),
+                                                "(19|20)\\d{2}")
       if (is.na(yr)) next
       info <- fs::file_info(f)
       new_rows[[length(new_rows) + 1L]] <- list(
         dataset_key        = dataset_key,
         folder             = folder,
         year               = yr,
-        month              = month,
+        month              = ds_month,
         landing_url        = NA_character_,
         file_url           = NA_character_,
         local_path         = f,
@@ -107,12 +115,12 @@ backfill_manifest <- function(root = default_ma_plans_root(), month = DEFAULT_MO
       )
     }
   }
-
+  
   if (length(new_rows) == 0) {
     message("Backfill: nothing new to add; manifest already covers on-disk files.")
     return(invisible(manifest))
   }
-
+  
   add_dt <- data.table::rbindlist(new_rows, use.names = TRUE, fill = TRUE)
   if (ncol(manifest) > 0)
     manifest <- data.table::as.data.table(lapply(manifest, as.character))
